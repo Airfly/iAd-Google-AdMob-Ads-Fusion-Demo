@@ -1,0 +1,8 @@
+============================
+Google AdMob Ads SDK for iOS
+============================
+
+Just place AdMob SDK in this folder.
+
+AdMob SDK can be downloaded at:
+https://developers.google.com/mobile-ads-sdk/download
