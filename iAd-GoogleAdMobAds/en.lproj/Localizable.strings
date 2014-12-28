@@ -1,0 +1,25 @@
+/* 
+ Localizable.strings
+ //  Air Vision Touch Serial
+ //
+ //  http://airflypan.com
+ //  airflypan@msn.com
+ //  QQ:1272000
+ //  Tel:+86 159 7771 0035
+ //
+ //  Created by Airfly Pan on 2009-3-13.
+ //  Copyright (c) 2009-2020 Air Vision Studio. All rights reserved.
+ //
+ */
+
+/* Question */
+"Question" = "Question";
+"Notification" = "Notification";
+"Done" = "Done";
+"OK" = "OK";
+"Cancel" = "Cancel";
+"Yes" = "Yes";
+"No" = "No";
+
+/* UI */
+"InterstitialAdsNote" = "Interstitial Ad will show. For testing, please check app's log (NSLog message), if there is an ad received & load successed in log message like: '[GAD]: interstitialDidReceiveAd' or '[iAd]: interstitialAdDidLoad', then tap on OK button to see the ad.";

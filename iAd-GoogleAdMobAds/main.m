@@ -1,16 +1,9 @@
 //
 //  main.m
-//  iAd-GoogleAdMobAds
+//  Test Bluno
 //
-//  Air Vision Touch Serial
-//
-//  http://airflypan.com
-//  airflypan@msn.com
-//  QQ:1272000
-//  Tel:+86 159 7771 0035
-//
-//  Created by Airfly Pan on 10-3-13.
-//  Copyright (c) 2009-2013 Air Vision Studio. All rights reserved.
+//  Created by Airfly Pan on 13-12-18.
+//  Copyright (c) 2013年 Air Vision. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

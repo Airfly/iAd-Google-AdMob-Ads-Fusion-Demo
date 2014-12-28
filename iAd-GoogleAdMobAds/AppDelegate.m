@@ -1,7 +1,5 @@
 //
 //  AppDelegate.m
-//  iAd-GoogleAdMobAds
-//
 //  Air Vision Touch Serial
 //
 //  http://airflypan.com
@@ -9,11 +7,9 @@
 //  QQ:1272000
 //  Tel:+86 159 7771 0035
 //
-//  Created by Airfly Pan on 10-3-13.
-//  Copyright (c) 2009-2013 Air Vision Studio. All rights reserved.
+//  Created by Airfly Pan on 2009-3-13.
+//  Copyright (c) 2009-2020 Air Vision Studio. All rights reserved.
 //
-
-//#import <AdSupport/ASIdentifierManager.h>
 
 #import "AppDelegate.h"
 
@@ -30,13 +26,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
-    // Override point for customization after application launch.
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        self.viewController = [[[ViewController alloc] initWithNibName:@"ViewController_iPhone" bundle:nil] autorelease];
-    } else {
-        self.viewController = [[[ViewController alloc] initWithNibName:@"ViewController_iPad" bundle:nil] autorelease];
+    if([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
+        [application setStatusBarStyle:UIStatusBarStyleLightContent];
     }
+    
+    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    
+    self.viewController = [[[ViewController alloc] initWithNibName:nil bundle:nil] autorelease];
+    
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
     return YES;

@@ -1,0 +1,24 @@
+/* 
+ Localizable.strings
+ //  Air Vision Touch Serial
+ //
+ //  http://airflypan.com
+ //  airflypan@msn.com
+ //  QQ:1272000
+ //  Tel:+86 159 7771 0035
+ //
+ //  Created by Airfly Pan on 2009-3-13.
+ //  Copyright (c) 2009-2020 Air Vision Studio. All rights reserved.
+ //
+ */
+/* Question */
+"Question" = "问题";
+"Notification" = "提醒";
+"Done" = "完成";
+"OK" = "确定";
+"Cancel" = "取消";
+"Yes" = "是";
+"No" = "否";
+
+/* UI */
+"InterstitialAdsNote" = "全屏广告即将展示。广告商对全屏广告采用即申请即展示的处理办法，由于不同国家和区域的网络速度及稳定性各异，并且不同国家和区域全屏广告库存不同因而无法确保每次申请都会成功，所以会有可能出现没有广告展示的结果。为了测试，你可以一边注意查看日志输出(NSLog)，如果有广告申请成功，并加载到位([GAD]: interstitialDidReceiveAd、[iAd]: interstitialAdDidLoad)，再点 “确定” 查看广告效果。";
