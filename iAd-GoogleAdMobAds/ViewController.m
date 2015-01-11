@@ -22,41 +22,6 @@
 @implementation ViewController
 
 #pragma mark -
-#pragma mark - for Ads
-@synthesize iAdView;
-@synthesize iAdFull;
-@synthesize gAdView;
-@synthesize gAdFull;
-
-static int  iAdFailedCount = 0;
-static BOOL is_iAdON = NO;
-static BOOL is_gAdON = NO;
-static BOOL is_gAdFailed = NO;
-static BOOL is_iAdWillON = NO;
-static BOOL is_gAdWillON = NO;
-static BOOL isAdLoaded = NO;
-
-static NSString *MY_BANNER_UNIT_ID=@"a14e4381ad94b7d";
-
-//interstitial ad provider index, marked current provider
-//广告供应商索引，标识当前使用哪一家广告商
-//0-gad; 1-iad
-static int interstitialAdIndex = 0;
-
-//count of interstitial ad requested,
-//once request success then hedge for one.
-//if failed then switch ad provider.
-//全屏广告请求计数，次数越大，说明请求广告次数越多。
-//每能展示一次广告，就抵消一次请求。
-//如果请求失败，则切换广告供应商。
-static int interstitialAdApplyCount = 0;
-
-static int interstitialAdUnPresentCount = 0;
-static BOOL isInterstitialAdUIReady = NO;
-
-static CGSize sizeClient;
-
-#pragma mark -
 #pragma mark - Private ...
 static BOOL isiPad;
 static float iOSVer = 6.0;
@@ -126,8 +91,7 @@ static float iOSVer = 6.0;
 
 #pragma mark -
 #pragma mark - LifeCycle
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
@@ -181,6 +145,57 @@ static float iOSVer = 6.0;
 #pragma mark - Fusion Ads: iAd + AdMob ===================================
 
 #pragma mark -
+#pragma mark - iAd + AdMob Workflow Note
+//please checking functions below:
+//
+// - (void)viewDidLoad
+//
+// - (void)viewDidAppear:(BOOL)animated
+//
+// - (void)updateOrientation:(NSNotification*)notification
+//
+// - (void)settingsTap:(id)sender
+//
+// - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+//
+// - (void)resizeElements
+
+#pragma mark -
+#pragma mark - for Ads
+@synthesize iAdView;
+@synthesize iAdFull;
+@synthesize gAdView;
+@synthesize gAdFull;
+
+static int  iAdFailedCount = 0;
+static BOOL is_iAdON = NO;
+static BOOL is_gAdON = NO;
+static BOOL is_gAdFailed = NO;
+static BOOL is_iAdWillON = NO;
+static BOOL is_gAdWillON = NO;
+static BOOL isAdLoaded = NO;
+
+static NSString *MY_BANNER_UNIT_ID=@"a14e4381ad94b7d";
+
+//interstitial ad provider index, marked current provider
+//广告供应商索引，标识当前使用哪一家广告商
+//0-gad; 1-iad
+static int interstitialAdIndex = 0;
+
+//count of interstitial ad requested,
+//once request success then hedge for one.
+//if failed then switch ad provider.
+//全屏广告请求计数，次数越大，说明请求广告次数越多。
+//每能展示一次广告，就抵消一次请求。
+//如果请求失败，则切换广告供应商。
+static int interstitialAdApplyCount = 0;
+
+static int interstitialAdUnPresentCount = 0;
+static BOOL isInterstitialAdUIReady = NO;
+
+static CGSize sizeClient;
+
+#pragma mark -
 #pragma mark - BannerView Ad Controll (横幅广告调用控制)
 - (void)destroyAds {
     if(gAdView) {
@@ -198,6 +213,9 @@ static float iOSVer = 6.0;
     isAdLoaded = NO;
     is_gAdON = NO;
     is_iAdON = NO;
+    
+    //also can call resizeElements here
+    //[self resizeElements];
 }
 
 - (BOOL)isiAdAvailable {
@@ -310,33 +328,49 @@ static float iOSVer = 6.0;
     if (gAdView.hidden) {
         gAdView.hidden = NO;
     }
+    
+    [self resizeElements];
 }
 
 - (void)layoutiAdBannerView:(BOOL)animated
 {
+    CGSize sizeForBanner;
     if(iOSVer < 6.0) {
         if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)) {
             iAdView.currentContentSizeIdentifier = ADBannerContentSizeIdentifierPortrait;
         } else {
             iAdView.currentContentSizeIdentifier = ADBannerContentSizeIdentifierLandscape;
         }
+        
+        sizeForBanner = iAdView.frame.size;
+    }
+    else {
+        // all we need to do is ask the banner for a size that fits into the layout area we are using
+        sizeForBanner = [iAdView sizeThatFits:sizeClient];
     }
     
-    //CGRect contentFrame = self.view.bounds;
     CGRect bannerFrame = iAdView.frame;
     if (iAdView.bannerLoaded) {
         //contentFrame.size.height -= iAdView.frame.size.height;
         //bannerFrame.origin.y = contentFrame.size.height;
-        bannerFrame.origin.y = sizeClient.height - iAdView.frame.size.height; //0;
+        bannerFrame.origin.y = sizeClient.height - sizeForBanner.height; //iAdView.frame.size.height; //0;
+        bannerFrame.size.height = sizeForBanner.height;
+        bannerFrame.size.width = sizeForBanner.width;
     } else {
         //bannerFrame.origin.y = contentFrame.size.height;
-        bannerFrame.origin.y += iAdView.frame.size.height;
+        bannerFrame.origin.y += sizeForBanner.height; //iAdView.frame.size.height;
+        bannerFrame.size.height = sizeForBanner.height;
+        bannerFrame.size.width = sizeForBanner.width;
     }
     
     [UIView animateWithDuration:animated ? 0.25 : 0.0 animations:^{
         //_contentView.frame = contentFrame;
         //[_contentView layoutIfNeeded];
         iAdView.frame = bannerFrame;
+    } completion:^(BOOL finished) {
+        if(finished) {
+            [self resizeElements];
+        }
     }];
 }
 
@@ -432,6 +466,51 @@ static float iOSVer = 6.0;
     }
 }
 
+// resize some elements for UI
+// 重新改变UI中部分元素的尺寸
+- (void)resizeElements {
+    //CGRect tmpRect = _txtLog.frame;
+    // TO DO ...
+    if(iAdView) {
+        if (iAdView.bannerLoaded) {
+            //tmpRect.size.height = (sizeClient.height - iAdView.frame.size.height - 10) - tmpRect.origin.y;
+            // TO DO ...
+        } else {
+            //tmpRect.size.height = (sizeClient.height - 10) - tmpRect.origin.y;
+            // TO DO ...
+        }
+    }
+    else if(gAdView) {
+        if (!gAdView.hidden) {
+            //tmpRect.size.height = (sizeClient.height - gAdView.frame.size.height - 10) - tmpRect.origin.y;
+            // TO DO ...
+        } else {
+            //tmpRect.size.height = (sizeClient.height - 10) - tmpRect.origin.y;
+            // TO DO ...
+        }
+    }
+    else {
+        //tmpRect.size.height = (sizeClient.height - 10) - tmpRect.origin.y;
+        // TO DO ...
+    }
+    //_txtLog.frame = tmpRect;
+    // TO DO ...
+}
+
+// Returns the currently selected BannerSize's GADAdSize to load.
+// 获取当前谷歌横幅广告的尺寸
+- (GADAdSize)sizeGADBanner {
+    //current orientation
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    GADAdSize result;
+    if(UIInterfaceOrientationIsLandscape(orientation))
+        result = kGADAdSizeSmartBannerLandscape;
+    else
+        result = kGADAdSizeSmartBannerPortrait;
+    
+    return result;
+}
+
 - (void)tryGAdWheniAdFailed {
     iAdFailedCount = 0;
     is_gAdWillON = YES;
@@ -491,19 +570,6 @@ static float iOSVer = 6.0;
             iAdView.hidden = YES; //will show later when iAd content arrived
         }
     }
-}
-
-// Returns the currently selected BannerSize's GADAdSize to load.
-- (GADAdSize)sizeGADBanner {
-    //current orientation
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    GADAdSize result;
-    if(UIInterfaceOrientationIsLandscape(orientation))
-        result = kGADAdSizeSmartBannerLandscape;
-    else
-        result = kGADAdSizeSmartBannerPortrait;
-    
-    return result;
 }
 
 #pragma mark -
@@ -655,7 +721,7 @@ static float iOSVer = 6.0;
 - (void)adViewDidReceiveAd:(GADBannerView *)view {
     NSLog(@"[GAD]: adViewDidReceiveAd");
     
-	[self.view addSubview:gAdView];
+    [self.view addSubview:gAdView];
     is_gAdFailed = NO;
     is_gAdON = YES;
     
@@ -669,10 +735,10 @@ static float iOSVer = 6.0;
 - (void)adView:(GADBannerView *)view didFailToReceiveAdWithError:(GADRequestError *)error {
     NSLog(@"[GAD]: adView: didFailToReceiveAdWithError:");
     //NSLog(@"err.Desc:%@",[error localizedDescription]);
-	//if([error localizedRecoverySuggestion] != nil)
-	//	NSLog(@"err.Sugg:%@",[error localizedRecoverySuggestion]);
-	//if([error localizedFailureReason] != nil)
-	//	NSLog(@"err.Reas:%@",[error localizedFailureReason]);
+    //if([error localizedRecoverySuggestion] != nil)
+    //	NSLog(@"err.Sugg:%@",[error localizedRecoverySuggestion]);
+    //if([error localizedFailureReason] != nil)
+    //	NSLog(@"err.Reas:%@",[error localizedFailureReason]);
     
     if(is_gAdON) {
         is_gAdON = NO;
@@ -789,13 +855,13 @@ static float iOSVer = 6.0;
 
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner {
     NSLog(@"[iAd]: Banner loaded.");
-    if (!is_iAdON)
-    {
+    //if (!is_iAdON)
+    //{
         [self layoutiAdBannerView:YES];
         
         is_iAdON = YES;
         banner.hidden = NO;
-    }
+    //}
     isAdLoaded = YES;
 }
 

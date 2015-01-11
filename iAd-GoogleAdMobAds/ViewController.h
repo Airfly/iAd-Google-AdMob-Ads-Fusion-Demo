@@ -29,25 +29,4 @@
 @property (nonatomic, strong) ADInterstitialAd *iAdFull;
 @property (nonatomic, strong) GADBannerView    *gAdView;
 @property (nonatomic, strong) GADInterstitial  *gAdFull;
-
-//Ads广告处理
-- (BOOL)isiAdAvailable;
-- (BOOL)isiAdInterstitialSupported;
-- (void)initInterstitialAds;
-- (void)planInterstitialAds;
-- (void)layoutInterstitialAds;
-- (void)destroyInterstitialAds;
-- (void)planAds;
-- (void)destroyAds;
-- (void)tryiAdWhenGAdFailed;
-- (void)tryGAdWheniAdFailed;
-- (void)layoutGADBannerView;
-- (GADAdSize)sizeGADBanner;
-
-//iAd代理
-- (void)cancelBannerViewAction;
-- (void)bannerViewDidLoadAd:(ADBannerView *)banner;
-- (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error;
-- (BOOL)bannerViewActionShouldBegin:(ADBannerView *)banner willLeaveApplication:(BOOL)willLeave;
-- (void)bannerViewActionDidFinish:(ADBannerView *)banner;
 @end
